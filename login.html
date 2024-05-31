@@ -8,33 +8,22 @@
 </head>
 <body>
 
-      <main>
-        <section id="masthead" style="--name:--masthead-s;">
-          <div class="flying-squares">
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-          </div>
-          <div class="login-container">
-          <form class="login-form" action="login.php">
-            <h1>Login</h1>
-            <div>
-            <div class="form-input-material">
-              <input type="text" name="email" id="email" placeholder=" " autocomplete="off" class="form-control-material" required />
-              <label for="username">Email</label>
-            </div>
-            <div class="form-input-material">
-              <input type="password" name="password" id="password" placeholder=" " autocomplete="off" class="form-control-material" required />
-              <label for="password">Password</label>
-            </div>
-            <a href="javascript:void(0);" class="forgot-password">I don't have an account?</a>
-            </div>
-            <button type="submit" class="btn btn-primary btn-ghost">Login</button>
-        </div>  
+  
+        
+    <div class="form-container">
+        <p class="title">Login</p>
+        <form class="form" action="login.php">
+          <input type="text" name="email" id="email" class="input" placeholder="Email">
+          <input type="password" name="password" id="password" class="input" placeholder="Password">
+          <p class="page-link">
+            <!-- <span class="page-link-label">Forgot Password?</span> -->
+          </p>
+          <button class="form-btn">Log in</button>
         </form>
-        </section>
-        
-        
-
+      <a href="register.html"> <p class="sign-up-label">
+          Don't have an account?<span class="sign-up-link">Register</span>
+        </p></a>
+      
+      </div>
 </body>
 </html>
