@@ -10,18 +10,18 @@
     
     <div class="form-container">
         <p class="title">Register</p>
-        <form class="form">
-          <input type="Name" class="input" placeholder="Name">
-          <input type="Surname" class="input" placeholder="Last Name">
-          <input type="Email" class="input" placeholder="Email">
-          <input type="Password" class="input" placeholder="Password">
-          <input type="text" class="input" placeholder="Company Code">
+        <form class="form" action="signup.php" method="post">
+          <input type="text" name="name" class="input" placeholder="Name">
+          <input type="text" name="surname" class="input" placeholder="Last Name">
+          <input type="email" name="email" class="input" placeholder="Email">
+          <input type="password" name="password" class="input" placeholder="Password">
+          <input type="text" name="company_code" class="input" placeholder="Company Code">
           <p class="page-link">
             <!-- <span class="page-link-label">Forgot Password?</span> -->
           </p>
-          <button class="form-btn">Sign Up</button>
+          <button type="submit" class="form-btn">Sign Up</button>
         </form>
-      <a href="login.html"><p class="sign-up-label">
+        <a href="login.html"><p class="sign-up-label">
           Already Have Account<span class="sign-up-link">Login</span>
         </p></a>
       
