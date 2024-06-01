@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 include 'config.php';
 
@@ -18,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
+            $_SESSION['fullname'] = $user['name'] . $user['surname'];
             $_SESSION['email'] = $email;
             $_SESSION['role'] = $user['role'];
         
