@@ -1,0 +1,90 @@
+.task-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+  .task-section {
+    width: 30%;
+    margin: 10px;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+  }
+  
+  .task-section h2 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .task-section.hover {
+    background-color: #e6e6e6;
+  }
+  
+  .task-section.ui-sortable-helper {
+    transform: rotate(5deg);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .task {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: move;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .task:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .task h2 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .task p {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .task .task-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  .task .task-actions button {
+    background-color: #5aac44;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-left: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .task .task-actions button:hover {
+    background-color: #4d9e3b;
+  }
+  
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  h2 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+  }
+  

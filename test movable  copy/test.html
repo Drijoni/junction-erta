@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trello-like Task Manager</title>
+  <link rel="stylesheet" href="test.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Nunito:wght@700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <div class="task-container">
+    <div class="task-section" id="section-1">
+      <h2>To Do</h2>
+      <div class="task" data-id="task1">
+        <h2>Task 1</h2>
+        <p>Description of Task 1</p>
+        <div class="task-actions">
+          <button>Edit</button>
+          <button>Delete</button>
+        </div>
+      </div>
+      <div class="task" data-id="task2">
+        <h2>Task 2</h2>
+        <p>Description of Task 2</p>
+        <div class="task-actions">
+          <button>Edit</button>
+          <button>Delete</button>
+        </div>
+      </div>
+    </div>
+    <div class="task-section" id="section-2">
+      <h2>In Progress</h2>
+    </div>
+    <div class="task-section" id="section-3">
+      <h2>Done</h2>
+    </div>
+  </div>
+  <script src="test.js"></script>
+</body>
+</html>
