@@ -1,61 +1,37 @@
 <?php
 include '../../config.php';
 
+
+$response = ['success' => false]; // Initialize response
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'];
-    $description = $_POST['description'];
-    $deadline = $_POST['deadline'];
-    $priority = $_POST['priority'];
-    $department_id = $_POST['department']; // Retrieve department ID from the form
-    
-    $img_path = null;
-    if (isset($_FILES['img']) && $_FILES['img']['error'] === UPLOAD_ERR_OK) {
-        $img = $_FILES['img']['name']; 
-        $img_tmp = $_FILES['img']['tmp_name'];
+    $project_id = $_POST['project_id'] ?? '';
+    $list_name = $_POST['list_name'] ?? '';
+    $list_position = $_POST['list_position'] ?? '';
 
-        // Validate and move the uploaded image
-        if (move_uploaded_file($img_tmp, "uploads/" . $img)) {
-            $img_path = "uploads/" . $img;
+    if (empty($project_id) || empty($list_name) || empty($list_position)) {
+        $response['error'] = 'Missing required fields';
+        echo json_encode($response);
+        exit;
+    }
+
+    $stmt = $conn->prepare("INSERT INTO board_list (project_id, list_name, list_position) VALUES (?, ?, ?)");
+    if ($stmt) {
+        $stmt->bind_param("isi", $project_id, $list_name, $list_position);
+
+        if ($stmt->execute()) {
+            $response['success'] = true;
         } else {
-            echo "Failed to upload image.";
-            exit();
+            $response['error'] = $stmt->error;
         }
-    }
-
-    // Insert project into projects table
-    if ($img_path) {
-        $insertProjectQuery = "INSERT INTO projects (name, description, deadline, priority, img) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($insertProjectQuery);
-        $stmt->bind_param("sssss", $name, $description, $deadline, $priority, $img_path);
+        $stmt->close();
     } else {
-        $insertProjectQuery = "INSERT INTO projects (name, description, deadline, priority) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($insertProjectQuery);
-        $stmt->bind_param("ssss", $name, $description, $deadline, $priority);
+        $response['error'] = $conn->error;
     }
-
-    if ($stmt->execute()) {
-        // Retrieve the ID of the newly inserted project
-        $project_id = $stmt->insert_id;
-
-        // Insert into project_department_relations table
-        $insertRelationQuery = "INSERT INTO project_department_relations (project_id, department_id) VALUES (?, ?)";
-        $stmtRelation = $conn->prepare($insertRelationQuery);
-        $stmtRelation->bind_param("ii", $project_id, $department_id);
-
-        if ($stmtRelation->execute()) {
-            header("Location: " . $_SERVER['HTTP_REFERER']);
-            exit();
-        } else {
-            echo 'Error: ' . $stmtRelation->error;
-        }
-
-        $stmtRelation->close();
-    } else {
-        echo 'Error: ' . $stmt->error;
-    }
-
-    $stmt->close();
+} else {
+    $response['error'] = 'Invalid request method';
 }
 
+echo json_encode($response);
 $conn->close();
 ?>
