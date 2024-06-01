@@ -1,59 +1,30 @@
 <?php
 include '../../config.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Retrieve data from the form
-    $id = $_POST['modalID'];
+// Check if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve department ID from the form
+    $id = $_POST['ID'];
+
+    // Retrieve updated department information from the form
     $name = $_POST['name'];
     $description = $_POST['description'];
-    $priority = $_POST['departmenType'];
-    // File handling for image
-    if ($_FILES['image']['error'] == UPLOAD_ERR_OK) {
-        $image_tmp_name = $_FILES['image']['tmp_name'];
-        $image_name = $_FILES['image']['name'];
-        $upload_dir = 'uploads/';
-        move_uploaded_file($image_tmp_name, $upload_dir . $image_name);
-        $image = $upload_dir . $image_name;
+    $departmentType = $_POST['departmenType']; // Assuming this represents department type
+    $deadline = $_POST['deadline'];
+
+    // Update the department information in the database
+    $updateQuery = "UPDATE departments SET name='$name', description='$description', deadline='$deadline' WHERE id=$id";
+
+    if ($conn->query($updateQuery) === TRUE) {
+        // If update is successful, redirect the user back to the page where they can see the updated information
+        header("Location:../dashboard.php?departments");
+        // exit();
     } else {
-        $image = null;
-    }
-
-    // Create the SQL update statement
-    $query = "UPDATE departments SET 
-              name = ?, 
-              description = ?, 
-              priority = ?";
-
-    if ($image) {
-        $query .= ", img = ?";
-    }
-    
-    $query .= " WHERE id = ?";
-
-    // Prepare the statement
-    $stmt = $conn->prepare($query);
-
-    if ($image) {
-        $stmt->bind_param('ssssi', $name, $description, $priority, $image, $id);
-    } else {
-        $stmt->bind_param('sssi', $name, $description, $priority, $id);
-    }
-
-    // Execute the statement
-    if ($stmt->execute()) {
-        echo "Department updated successfully.";
-    } else {
+        // If there is an error with the update query, display an error message
         echo "Error updating department: " . $conn->error;
     }
-
-    // Close the statement and connection
-    $stmt->close();
-    $conn->close();
-
-    // Redirect back to the main page
-    header("Location: /path/to/your/page.php"); // Adjust the path as needed
-    exit();
-} else {
-    echo "Invalid request method.";
 }
+
+// Close the database connection
+$conn->close();
 ?>

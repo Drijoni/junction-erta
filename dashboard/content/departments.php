@@ -1,11 +1,22 @@
 <?php
+include '../config.php';
+
 
 $query = "SELECT * FROM departments";
 $result = $conn->query($query);
 
 $query = "SELECT * FROM users";
 $users = $conn->query($query);
-
+?>
+<?php
+// Assuming you have fetched department data from your database
+$data = [
+    "name" => "Department Name",
+    "description" => "Department Description",
+    "department_type" => "Department Type",
+    "deadline" => "2024-06-01", // Assuming this is a valid deadline date
+    // Add more data fields as needed
+];
 ?>
 
 <div class="w-full px-4">
@@ -113,9 +124,14 @@ $users = $conn->query($query);
         <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500" type="file" id="create-image" name="image" accept="image/*">
       </div>
       <!-- Department Type -->
-      <div class="mb-6">
+      <div class="mb-4">
         <label class="block text-gray-700 font-semibold mb-2" for="departmenType">Department Type</label>
         <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500" id="create-departmenType" name="departmenType" placeholder="Ex. UI/UX, VFX/GFX" required>
+      </div>
+      <!-- Deadline -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-semibold mb-2" for="deadline">Deadline</label>
+        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500" type="date" id="create-deadline" name="deadline" required>
       </div>
       <!-- Submit Button -->
       <div>
@@ -137,30 +153,56 @@ $users = $conn->query($query);
       <p class="text-gray-500 text-sm mb-4">Update department details below.</p>
       <div class="flex justify-between">
         <div class="mr-4">
-        <form action="">
-        <input type="hidden" id="modify-id" name="departmentID">
-          <div class="flex items-center mb-2">
-            <span class="material-symbols-outlined">subject</span>
-            <label for="modify-name" class="block text-xl font-medium text-gray-600 ml-2">Name</label>
-          </div>
-          <input id="modify-name" name="name" type="text" class="w-64 p-2 mb-4 border rounded focus:outline-none focus:border-indigo-500" placeholder="Name" required>
-          <div class="flex items-center mb-2">
-            <span class="material-symbols-outlined">description</span>
-            <h2 class="text-xl font-medium text-gray-600 ml-2">Description</h2>
-          </div>
-          <textarea id="modify-description" name="description" class="w-64 h-32 p-2 border rounded focus:outline-none focus:border-indigo-500" placeholder="Describe the department" rows="4" required></textarea>
-          <div class="flex items-center mb-2">
-            <span class="material-symbols-outlined">image</span>
-            <label for="modify-image" class="block text-xl font-medium text-gray-600 ml-2">Upload Image</label>
-          </div>
-          <input id="modify-image" name="image" type="file" class="w-64 p-2 mb-4 border rounded focus:outline-none focus:border-indigo-500" accept="image/*">
-          <div class="flex items-center mb-2">
-            <span class="material-symbols-outlined">category</span>
-            <label for="modify-departmenType" class="block text-xl font-medium text-gray-600 ml-2">Department Type</label>
-          </div>
-          <input id="modify-departmenType" name="departmenType" type="text" class="w-64 p-2 mb-6 border rounded focus:outline-none focus:border-indigo-500" placeholder="Ex. UI/UX, VFX/GFX" required>
-          <button class="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600" type="submit">Submit</button>
-          </form>
+
+
+
+
+    <form action="content/modify_department.php" method="POST" enctype="multipart/form-data">
+    <!-- Hidden input field for department ID -->
+    <input type="hidden" id="modify-id" name="ID">
+
+    
+    <!-- Name input field -->
+    <div class="flex items-center mb-2">
+        <span class="material-symbols-outlined">subject</span>
+        <label for="modify-name" class="block text-xl font-medium text-gray-600 ml-2"><?php echo htmlspecialchars($data["name"]); ?></label>
+    </div>
+    <input id="modify-name" name="name" type="text" class="w-full p-2 mb-4 border rounded focus:outline-none focus:border-indigo-500" placeholder="Name" required>
+    
+    <!-- Description input field -->
+    <div class="flex items-center mb-2">
+        <span class="material-symbols-outlined">description</span>
+        <label for="modify-description" class="block text-xl font-medium text-gray-600 ml-2"><?php echo htmlspecialchars($data["description"]); ?></label>
+    </div>
+    <textarea id="modify-description" name="description" class="w-full h-32 p-2 border rounded focus:outline-none focus:border-indigo-500" placeholder="Describe the department" rows="4" required></textarea>
+    
+    <!-- Image upload field -->
+    <div class="flex items-center mb-2">
+        <span class="material-symbols-outlined">image</span>
+        <label for="modify-image" class="block text-xl font-medium text-gray-600 ml-2">Upload Image</label>
+    </div>
+    <input id="modify-image" name="image" type="file" class="w-full p-2 mb-4 border rounded focus:outline-none focus:border-indigo-500" accept="image/*">
+    
+    <!-- Department Type input field -->
+    <div class="flex items-center mb-2">
+        <span class="material-symbols-outlined">category</span>
+        <label for="modify-departmenType" class="block text-xl font-medium text-gray-600 ml-2"><?php echo htmlspecialchars($data["department_type"]); ?></label>
+    </div>
+    <input id="modify-departmenType" name="departmenType" type="text" class="w-full p-2 mb-6 border rounded focus:outline-none focus:border-indigo-500" placeholder="Ex. UI/UX, VFX/GFX" required>
+    
+    <!-- Deadline input field -->
+    <div class="flex items-center mb-2">
+        <span class="material-symbols-outlined">event</span>
+        <label for="modify-deadline" class="block text-xl font-medium text-gray-600 ml-2"><?php echo htmlspecialchars($data["deadline"]); ?></label>
+    </div>
+    <input id="modify-deadline" name="deadline" type="date" class="w-full p-2 mb-6 border rounded focus:outline-none focus:border-indigo-500" required>
+    
+    <!-- Submit button -->
+    <button class="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600" type="submit">Submit</button>
+</form>
+
+
+
         </div>
         <form action="./content/user_department_relation.php" method="post">
           <input type="hidden" id="modify-id" name="departmentID"> <!-- Hidden input field for ID -->
@@ -220,8 +262,7 @@ $users = $conn->query($query);
     document.getElementById('modify-name').value = name;
     document.getElementById('modify-description').value = description;
     document.getElementById('modify-departmenType').value = priority; // Assuming departmentType represents priority
-
-    // Set image upload input value (this might not be directly possible due to security reasons, but if you are displaying the image somewhere, you can set the src attribute of an img element instead)
+    document.getElementById('modify-deadline').value = deadline;
 
     // Open the modify modal
     document.getElementById('modify-department-modal').classList.remove('hidden');

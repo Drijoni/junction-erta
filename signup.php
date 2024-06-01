@@ -55,10 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header("Location: dashboard/dashboard.php");
                 break;
             case '2':
-                header("Location: dashboard/dashboard.php?dashboar");
+                header("Location: dashboard/admindashboard.php");
                 break;
             case '3':
-                header("Location: member_dashboard.php");
+                header("Location: dashboard/member-dashboard.php");
                 break;
             case '4':
                 header("Location: client_dashboard.php");
