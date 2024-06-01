@@ -137,6 +137,8 @@ $users = $conn->query($query);
       <p class="text-gray-500 text-sm mb-4">Update department details below.</p>
       <div class="flex justify-between">
         <div class="mr-4">
+        <form action="">
+        <input type="hidden" id="modify-id" name="departmentID">
           <div class="flex items-center mb-2">
             <span class="material-symbols-outlined">subject</span>
             <label for="modify-name" class="block text-xl font-medium text-gray-600 ml-2">Name</label>
@@ -157,6 +159,8 @@ $users = $conn->query($query);
             <label for="modify-departmenType" class="block text-xl font-medium text-gray-600 ml-2">Department Type</label>
           </div>
           <input id="modify-departmenType" name="departmenType" type="text" class="w-64 p-2 mb-6 border rounded focus:outline-none focus:border-indigo-500" placeholder="Ex. UI/UX, VFX/GFX" required>
+          <button class="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600" type="submit">Submit</button>
+          </form>
         </div>
         <form action="./content/user_department_relation.php" method="post">
           <input type="hidden" id="modify-id" name="departmentID"> <!-- Hidden input field for ID -->
@@ -185,7 +189,6 @@ $users = $conn->query($query);
         </form>
       </div>
       <div>
-        <button class="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600" type="submit">Submit</button>
       </div>
     </div>
   </div>
