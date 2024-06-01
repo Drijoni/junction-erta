@@ -26,16 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
             // Redirect to dashboard based on the determined role
             switch ($_SESSION['role']) {
-                case 'superadmin':
+                case '1':
                     header("Location: dashboard/dashboard.php");
                     break;
-                case 'admin':
+                case '2':
                     header("Location: admin_dashboard.php");
                     break;
-                case 'member':
+                case '3':
                     header("Location: member_dashboard.php");
                     break;
-                case 'client':
+                case '4':
                 default:
                     header("Location: client_dashboard.php");
                     break;
