@@ -9,26 +9,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
     $company_code = isset($_POST['company_code']) ? $_POST['company_code'] : null;
+    $role = '4'; // Default role to client
 
-    // Check if company code is provided
-    if (empty($company_code)) {
-        $role = 'client';
-    } else {
-        // Assign role based on company code
+    // Check if company code is provided and valid
+    if (!empty($company_code)) {
         switch ($company_code) {
             case '1111':
-                $role = 'superadmin';
+                $role = '1';
                 break;
             case '2222':
-                $role = 'admin';
+                $role = '2';
                 break;
             case '3333':
-                $role = 'member';
+                $role = '3';
                 break;
             default:
-                // If company code is not recognized, default to client role
-                $role = 'client';
-                break;
+                echo 'Invalid company code.';
+                exit;
         }
     }
 
@@ -55,16 +52,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Redirect to dashboard based on the determined role
         switch ($role) {
-            case 'superadmin':
+            case '1':
                 header("Location: dashboard/dashboard.php");
                 break;
-            case 'admin':
+            case '2':
                 header("Location: admin_dashboard.php");
                 break;
-            case 'member':
+            case '3':
                 header("Location: member_dashboard.php");
                 break;
-            case 'client':
+            case '4':
                 header("Location: client_dashboard.php");
                 break;
         }
