@@ -1,3 +1,7 @@
+<?php
+include '../config.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,19 +21,21 @@
 
         <!--Check based on url-->
             <?php
-            if (isset($_GET['projects'])) {
-                include_once 'content/projects.php';
-            } elseif (isset($_GET['dashboard'])) {
-                include_once 'content/dashboard.php';
-            } elseif (isset($_GET['user-management'])) {
-                include_once 'content/user_management.php';
-            } elseif (isset($_GET['client-management'])) {
-                include_once 'content/client_management.php';
-            } elseif (isset($_GET['departments'])) {
-                include_once 'content/departments.php';
-            } else {
-                include_once 'content/default.php';
-            }
+                if (isset($_GET['projects'])) {
+                        include_once 'content/projects.php';
+                    } elseif (isset($_GET['dashboard'])) {
+                        include_once 'content/dashboard.php';
+                    } elseif (isset($_GET['user-management'])) {
+                        include_once 'content/user_management.php';
+                    } elseif (isset($_GET['client-management'])) {
+                        include_once 'content/client_management.php';
+                    } elseif (isset($_GET['departments'])) {
+                        include_once 'content/departments.php';
+                    } elseif (isset($_GET['taskboard'])) {
+                        include_once 'content/taskboard.php';
+                    } else {
+                        include_once 'content/default.php';
+                    }
             ?>
 
     </div>
