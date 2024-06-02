@@ -34,16 +34,16 @@ $result = $conn->query($query);
         $bg_color = '';
         switch ($row["action"]) {
           case 'created':
-            $bg_color = 'bg-green-400';
+            $bg_color = 'bg-green-200';
             break;
           case 'deleted':
-            $bg_color = 'bg-red-400';
+            $bg_color = 'bg-red-200';
             break;
           case 'updated':
-            $bg_color = 'bg-blue-400';
+            $bg_color = 'bg-blue-200';
             break;
           default:
-            $bg_color = 'bg-gray-400'; // Default color if action is not recognized
+            $bg_color = 'bg-gray-200'; // Default color if action is not recognized
         }
 
         // Output the details in the specified div with the appropriate background color
