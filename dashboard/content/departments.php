@@ -256,7 +256,6 @@ $data = [
     const img = element.getAttribute('data-img');
 
     document.getElementById('modify-id').value = id;
-    document.getElementById('departmentModal-id').value = id; // Set the hidden input value
     document.getElementById('modify-name').value = name;
     document.getElementById('modify-description').value = description;
     document.getElementById('modify-departmenType').value = priority; // Assuming departmentType represents priority
