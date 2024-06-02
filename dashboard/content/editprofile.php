@@ -2,8 +2,8 @@
 // Start the session
 
 
-// Include the database configuration
-include_once('config.php');
+// // Include the database configuration
+// include_once('config.php');
 
 // Initialize variables to store user data
 $name = '';
@@ -55,11 +55,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if(isset($_SESSION['role'])) {
     // Set the href based on the user's role
     if($_SESSION['role'] == 1) {
-        $href = "dashboard/dashboard.php";
+        $href = "dashboard.php";
     } elseif($_SESSION['role'] == 2) {
-        $href = "dashboard/admindashboard.php";
+        $href = "admindashboard.php";
     } elseif($_SESSION['role'] == 3) {
-        $href = "dashboard/member-dashboard.php";
+        $href = "member-dashboard.php";
     } else {
         // Handle other roles if needed
         $href = "#";
@@ -71,9 +71,8 @@ if(isset($_SESSION['role'])) {
 
 ?>
 
-<script src="https://cdn.tailwindcss.com"></script>
-
-<div class="container mx-auto p-4">
+       
+<div class="container mx-auto p-12 ">
     <h1 class="text-primary font-semibold text-3xl mb-12 mt-4">Edit Profile</h1>
     
     <div class="flex flex-wrap -mx-4">
