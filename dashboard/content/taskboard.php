@@ -33,6 +33,12 @@ if ($departments->num_rows > 0) {
     echo "No departments found for the given project ID.";
 }
 
+
+function getRandomImageSrc() {
+  $randomNumber = rand(1, 6); // Generate a random number between 1 and 6
+  return "./assets/$randomNumber.png"; // Construct the source path
+}
+
 // Close the statement
 $stmt->close();
 
@@ -83,7 +89,11 @@ $stmt->close();
               <h3 class="font-bold"><?= $task['name'] ?></h3>
               <span class="material-symbols-outlined">subject</span>
               <span class="material-symbols-outlined">attachment</span>
-              <img class="h-8 w-8 rounded-full absolute bottom-2 right-2" src="https://via.placeholder.com/150" alt="Profile Picture 1">
+              <?php
+              // Usage example in an HTML context
+              $imageSrc = getRandomImageSrc(); // Call the function to get a random image source
+              echo "<img class='h-8 w-8 rounded-full absolute bottom-2 right-2' src='$imageSrc' alt='Profile Picture'>";
+              ?>
             </div>
 
           <?php } ?>
@@ -107,7 +117,7 @@ $stmt->close();
     <!-- Task modal -->
     <div id="taskModal" class="hidden fixed inset-0 flex items-center justify-center min-h-screen bg-slate-300 bg-opacity-50">
       <div class="bg-white p-8 rounded shadow-md w-128 relative">
-        <span id="closeBtn" class="absolute top-0 text-5xl right-2 text-gray-500 font-5xl hover:text-gray-700 cursor-pointer">&times;</span> <!-- Close button -->
+        <span id="closeBtn" class="absolute top-0 text-4xl right-2 text-gray-500 font-5xl hover:text-gray-700 cursor-pointer">&times;</span> <!-- Close button -->
         <div class="p-5 border rounded max-w-xxl mx-auto"> <!-- Increased width -->
           <h1 class="text-3xl mb-4 text-gray-600 font-high"><span class="material-symbols-outlined align-middle mt-0">web_asset</span> Edit task</h1> <!-- Added symbol and adjusted vertical alignment -->
           <p class="text-gray-500 text-sm mb-4">This is some small grey text.</p> <!-- Added small grey text -->
@@ -122,7 +132,14 @@ $stmt->close();
                 <span class="material-symbols-outlined">checklist_rtl</span>
                 <h2 class="text-xl font-medium text-gray-600 ml-2">Description</h2>
               </div>
-              <textarea class="w-64 h-32 p-2 border rounded" id="description" placeholder="Describe your issue"></textarea> <!-- Adjusted width -->
+              <div class="flex flex-col">
+                <textarea class="w-64 h-32 p-2 border rounded" id="description" placeholder="Describe your issue"></textarea> <!-- Adjusted width -->
+                <div class="logo-erta visible flex flex-row items-center">
+                  <img src="../../erta.png" width="20" alt="">
+                  <span class="text-blue-900 font-bold">Erta - AI</span>
+                </div>
+                <button id="ai_btn" class="transition-all opacity-0 text-xs bg-purple-950 text-white p-2 my-2 w-32">Enhance with AI</button>
+              </div>
             </div>
             <form action="./content/user_task_relations.php" method="post">
               <input type="hidden" id="hiddenTaskID" name="taskID">
@@ -134,7 +151,7 @@ $stmt->close();
                       <span class="material-symbols-outlined">person</span>
                       <h2 class="text-xl font-medium text-gray-600 ml-2 mx-6">Members</h2>
                     </div>
-                    <button class="bg-blue-300 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">
+                    <button class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-1 px-2 rounded text-sm">
                       Assign Members
                     </button>
                   </div>
@@ -143,8 +160,6 @@ $stmt->close();
                   </select>
                   <!-- Member cards go here -->
                   <div id="taskMembersContainer"></div>
-                  <div class="p-2 border rounded mb-2">Member 1</div>
-
                 </h2>
               </div>
             </form>
@@ -312,6 +327,52 @@ function openTask(taskElement) {
     // Hide the modal
     modal.classList.add("hidden");
   });
+
+  const textarea = document.getElementById('description');
+  const ai_btn = document.getElementById('ai_btn');
+
+textarea.addEventListener('input', function() {
+  ai_btn.classList.remove('opacity-0');
+  ai_btn.classList.add('opacity-100');
+  $('.logo-erta').hide();
+});
+
+//ajax call
+$(document).ready(function() {
+  $('#ai_btn').click(function() {
+    var prompt = $('#description').val();
+    $.ajax({
+      type: 'POST',
+      url: './ai/help-ai.php',
+      data: {
+        prompt: prompt
+      },
+      success: function(response) {
+        // Parse the JSON response
+        var data = JSON.parse(response);
+
+        // Extract the tasks from the response
+        var tasks = data.text.split(', ');
+
+        // Display the tasks as needed
+        console.log(tasks); // Log the tasks to the console
+
+        // Example: Create an unordered list and append the tasks
+        var taskList = '';
+        $.each(tasks, function(index, task) {
+          taskList += '- ' + task + '\n';
+        });
+
+        // Set the tasks to the input field
+        $('#description').val(taskList);
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+      }
+    });
+  });
+});
+
 
 
 </script>

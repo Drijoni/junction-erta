@@ -85,8 +85,10 @@ $result = $conn->query($query);
         </div>
         <hr class="mt-3 mb-6 max-w-md">
         <div class="flex flex-row justify-between items-center">
-          <div class="mt-4 flex space-x-2">
-              <img class="h-8 w-8 rounded-full" src="<?php echo htmlspecialchars($img); ?>" alt="Project Image">
+            <div class=" flex space-x-2">
+              <img class="h-8 w-8 rounded-full" src="./assets/1.png" alt="Project Image">
+              <img class="h-8 w-8 rounded-full" src="./assets/2.png" alt="Project Image">
+              <img class="h-8 w-8 rounded-full" src="./assets/3.png" alt="Project Image">
             </div>
             <div class="text-black px-2 py-1 rounded">
               Priority: 

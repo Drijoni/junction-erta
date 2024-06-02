@@ -169,7 +169,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <div class="flex flex-col">
         <div class="flex flex-row w-full h-12 bg-white rounded-md items-center justify-between px-4 mt-4">
             <span class="font-bold">All Users</span>
-            <button style="float:left;text-decoration:none;" class="px-2 py-1.5 bg-cyan-500 rounded-md text-white">Create new user</button>
+            <div class="flex flex-row gap-2">
+                <button style="float:left;text-decoration:none;" class="px-2 py-1.5 bg-cyan-500 rounded-md text-white">Export Monthly Report</button>
+                <button style="float:left;text-decoration:none;" class="px-2 py-1.5 bg-cyan-500 rounded-md text-white">Create new user</button>
+
+            </div>
+
         </div>
 
         <div class="flex flex-row gap-8 w-full h-36 bg-white rounded-md items-center p-4 mt-4">
