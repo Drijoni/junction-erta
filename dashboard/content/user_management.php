@@ -160,6 +160,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 submitForm(form);
             });
         });
+
+        $(document).ready(function() {
+    // Existing code...
+
+    // Export Monthly Report button click event
+    $(".export-report").click(function() {
+        $.ajax({
+            type: 'POST',
+            url: './content/export-report.php', // Adjust as needed
+            data: { export: true },
+            xhrFields: {
+                responseType: 'blob'  // Important for handling the binary CSV file download
+            },
+            success: function(data) {
+                var a = document.createElement('a');
+                var url = window.URL.createObjectURL(data);
+                a.href = url;
+                a.download = 'monthly_report.csv';
+                document.body.append(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            }
+        });
+    });
+});
     </script>
 
 </head>
@@ -170,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         <div class="flex flex-row w-full h-12 bg-white rounded-md items-center justify-between px-4 mt-4">
             <span class="font-bold">All Users</span>
             <div class="flex flex-row gap-2">
-                <button style="float:left;text-decoration:none;" class="px-2 py-1.5 bg-cyan-500 rounded-md text-white">Export Monthly Report</button>
+                <button style="float:left;text-decoration:none;" class="px-2 py-1.5 bg-cyan-500 rounded-md text-white export-report">Export Monthly Report</button>
                 <button style="float:left;text-decoration:none;" class="px-2 py-1.5 bg-cyan-500 rounded-md text-white">Create new user</button>
 
             </div>
