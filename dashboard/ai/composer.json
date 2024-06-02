@@ -1,0 +1,17 @@
+{
+    "name": "drijon.halili/ai",
+    "autoload": {
+        "psr-4": {
+            "DrijonHalili\\Ai\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Drijon",
+            "email": "drinihalili15@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.5"
+    }
+}

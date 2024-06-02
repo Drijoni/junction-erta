@@ -1,18 +1,17 @@
 <?php
-// Database connection
-include '../config.php';
 
-// Fetch users with role 2 and 3 from the database
+// Fetch users with role 4 from the database
 $usersQuery = "SELECT * FROM users WHERE role = '4'";
 $usersResult = $conn->query($usersQuery);
 
+// Check if the query execution was successful
 if (!$usersResult) {
     die("Error fetching users: " . $conn->error);
 }
 
-// Handle AJAX requests for updating and deleting users
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if ($_POST['action'] == 'update') {
+// Handle form submission for updating name and surname
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['update'])) {
         $id = $_POST['id'];
         $name = $_POST['name'];
         $surname = $_POST['surname'];
@@ -21,25 +20,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $updateResult = $conn->query($updateQuery);
 
         if (!$updateResult) {
-            echo json_encode(["status" => "error", "message" => "Error updating user: " . $conn->error]);
-            exit();
-        } else {
-            echo json_encode(["status" => "success", "message" => "User updated successfully"]);
-            exit();
+            die("Error updating user: " . $conn->error);
         }
+
+        // Redirect back to the same page after form submission
+        header("Location: ".$_SERVER['PHP_SELF']);
+        exit();
     }
 
-    if ($_POST['action'] == 'delete') {
+    // Handle form submission for deleting user
+    if (isset($_POST['delete'])) {
         $id = $_POST['id'];
+
         $deleteQuery = "DELETE FROM users WHERE id=$id";
         $deleteResult = $conn->query($deleteQuery);
+
         if (!$deleteResult) {
-            echo json_encode(["status" => "error", "message" => "Error deleting user: " . $conn->error]);
-            exit();
-        } else {
-            echo json_encode(["status" => "success", "message" => "User deleted successfully"]);
-            exit();
+            die("Error deleting user: " . $conn->error);
         }
+
+        // Redirect back to the same page after form submission
+        header("Location: ".$_SERVER['PHP_SELF']);
+        exit();
     }
 }
 ?>
@@ -117,68 +119,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             margin-right: 10px;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('form').on('submit', function(e) {
-                e.preventDefault(); // Prevent the default form submission
-                var form = $(this);
-                var formData = form.serialize(); // Serialize form data
-                $.ajax({
-                    type: 'POST',
-                    url: '',
-                    data: formData,
-                    success: function(response) {
-                        var result = JSON.parse(response);
-                        if (result.status === 'success') {
-                            alert(result.message);
-                            // Optionally update the UI or perform other actions upon success
-                        } else {
-                            alert(result.message);
-                        }
-                    },
-                    error: function() {
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            });
-
-            $('.delete-button').on('click', function() {
-                var id = $(this).data('id');
-                var deletedRow = $('[data-id="' + id + '"]').closest('tr'); // Select the row to delete
-                $.ajax({
-                    type: 'POST',
-                    url: '',
-                    data: {id: id, action: 'delete'},
-                    success: function(response) {
-                        var result = JSON.parse(response);
-                        if (result.status === 'success') {
-                            alert(result.message);
-                            // Remove the deleted user's row from the table
-                            deletedRow.remove(); // Remove the row from the DOM
-                        } else {
-                            alert(result.message);
-                        }
-                    },
-                    error: function() {
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            });
-        });
-    </script>
 </head>
 <body>
 <div class="container">
     <div class="flex flex-col">
         <div class="flex flex-row w-full h-12 bg-white rounded-md items-center justify-between px-4 mt-4">
             <span class="font-bold">All Users</span>
-            <button style="float:left;text-decoration:none;" class="px-2 py-1.5 bg-cyan-500 rounded-md text-white">Create new user</button>
-  
         </div>
-
         <div class="flex flex-row gap-8 w-full h-36 bg-white rounded-md items-center p-4 mt-4">
-            <!-- Total Users -->
             <div class="flex flex-col border border-slate-200 justify-center items-center w-48 h-full rounded-md">
                 <span class="font-bold text-3xl text-start">
                     <?php echo $usersResult->num_rows; ?>
@@ -187,7 +135,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             </div>
         </div>
     </div>
-
     <div class="table-container mt-4">
         <table>
             <thead>
@@ -203,7 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 <tr>
                     <form method="post">
                         <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
-                        <input type="hidden" name="action" value="update">
                         <td><input type="text" name="name" value="<?php echo htmlspecialchars($user['name']); ?>"></td>
                         <td><input type="text" name="surname" value="<?php echo htmlspecialchars($user['surname']); ?>"></td>
                         <td>
@@ -212,12 +158,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                 echo "Admin";
                             } elseif ($user['role'] == '3') {
                                 echo "Member";
+                            } elseif ($user['role'] == '4') {
+                                echo "Client";
                             }
                             ?>
                         </td>
                         <td class="action-buttons">
-                            <button type="submit">Save Changes</button>
-                            <button type="button" class="delete-button" data-id="<?php echo $user['id']; ?>">Delete</button>
+                            <button type="submit" name="update">Save Changes</button>
+                            <button type="submit" name="delete">Delete</button>
                         </td>
                     </form>
                 </tr>

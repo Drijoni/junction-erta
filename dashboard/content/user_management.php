@@ -1,6 +1,6 @@
 <?php
 // Database connection
-include '../config.php';
+
 
 // Fetch users with role 2 and 3 from the database
 $usersQuery = "SELECT * FROM users WHERE role IN ('2', '3')";
