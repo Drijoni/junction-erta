@@ -3,7 +3,7 @@ session_start();
 $host = 'localhost';
 $username = 'root';
 $password = '';
-$database = 'erta-junction';
+$database = 'junction-erta';
 
 
 $conn = new mysqli($host, $username, $password, $database);

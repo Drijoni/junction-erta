@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
             // Debugging statement to check the role
             echo "Role: " . $_SESSION['role'];
-            header("Location: dashboard/dashboard.php");
+            header("Location: dashboard/dashboard.php?dashboard");
 
         } else {
             echo "Invalid password.";
