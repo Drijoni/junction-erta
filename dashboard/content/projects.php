@@ -108,7 +108,7 @@ $result = $conn->query($query);
 <?php
     }
 } else {
-    echo "No projects found.";
+    echo "No projects found.";  
 }
 $conn->close();
 ?>
