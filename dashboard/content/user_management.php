@@ -1,31 +1,18 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'junction-erta';
-
-$conn = new mysqli($host, $username, $password, $database);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
+// Database connection
+include '../config.php';
 
 // Fetch users with role 2 and 3 from the database
 $usersQuery = "SELECT * FROM users WHERE role IN ('2', '3')";
 $usersResult = $conn->query($usersQuery);
 
-// Check if the query execution was successful
 if (!$usersResult) {
     die("Error fetching users: " . $conn->error);
 }
 
-// Handle form submission for updating name and surname
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['update'])) {
+// Handle AJAX requests for updating and deleting users
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if ($_POST['action'] == 'update') {
         $id = $_POST['id'];
         $name = $_POST['name'];
         $surname = $_POST['surname'];
@@ -34,28 +21,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateResult = $conn->query($updateQuery);
 
         if (!$updateResult) {
-            die("Error updating user: " . $conn->error);
+            echo json_encode(["status" => "error", "message" => "Error updating user: " . $conn->error]);
+            exit();
+        } else {
+            echo json_encode(["status" => "success", "message" => "User updated successfully"]);
+            exit();
         }
     }
 
-    // Handle form submission for deleting user
-    if (isset($_POST['delete'])) {
+    if ($_POST['action'] == 'delete') {
         $id = $_POST['id'];
 
         $deleteQuery = "DELETE FROM users WHERE id=$id";
         $deleteResult = $conn->query($deleteQuery);
 
         if (!$deleteResult) {
-            die("Error deleting user: " . $conn->error);
+            echo json_encode(["status" => "error", "message" => "Error deleting user: " . $conn->error]);
+            exit();
+        } else {
+            echo json_encode(["status" => "success", "message" => "User deleted successfully"]);
+            exit();
         }
     }
-
-    // Redirect back to the same page after form submission
-    header("Location: ".$_SERVER['PHP_SELF']);
-    exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -129,6 +118,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-right: 10px;
         }
     </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Function to handle form submission via AJAX
+            function submitForm(form) {
+                var formData = form.serialize(); // Serialize form data
+                $.ajax({
+                    type: 'POST',
+                    url: '',
+                    data: formData,
+                    success: function(response) {
+                        var result = JSON.parse(response);
+                        if (result.status === 'success') {
+                            alert(result.message);
+                            if (form.find('input[name="action"]').val() === 'delete') {
+                                form.closest('tr').remove(); // Remove the row from the table
+                            }
+                        } else {
+                            alert(result.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            }
+
+            // Handle form submission for updating and deleting users
+            $('form').on('submit', function(e) {
+                e.preventDefault(); // Prevent the default form submission
+                submitForm($(this));
+            });
+
+            // Handle click event for delete buttons
+            $('.delete-button').on('click', function(e) {
+                e.preventDefault(); // Prevent the default button click behavior
+                var form = $(this).closest('form');
+                form.find('input[name="action"]').val('delete'); // Set the action to delete
+                submitForm(form);
+            });
+        });
+    </script>
+
 </head>
 <body>
 <div class="container">
@@ -136,6 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="flex flex-col">
         <div class="flex flex-row w-full h-12 bg-white rounded-md items-center justify-between px-4 mt-4">
             <span class="font-bold">All Users</span>
+            <button style="float:left;text-decoration:none;" class="px-2 py-1.5 bg-cyan-500 rounded-md text-white">Create new user</button>
         </div>
 
         <div class="flex flex-row gap-8 w-full h-36 bg-white rounded-md items-center p-4 mt-4">
@@ -164,6 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <tr>
                     <form method="post">
                         <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
+                        <input type="hidden" name="action" value="update">
                         <td><input type="text" name="name" value="<?php echo htmlspecialchars($user['name']); ?>"></td>
                         <td><input type="text" name="surname" value="<?php echo htmlspecialchars($user['surname']); ?>"></td>
                         <td>
@@ -176,8 +211,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             ?>
                         </td>
                         <td class="action-buttons">
-                            <button type="submit" name="update">Save Changes</button>
-                            <button type="submit" name="delete">Delete</button>
+                            <button type="submit">Save Changes</button>
+                            <button type="button" class="delete-button">Delete</button>
                         </td>
                     </form>
                 </tr>
