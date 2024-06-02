@@ -23,24 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
             // Debugging statement to check the role
             echo "Role: " . $_SESSION['role'];
-        
-            // Redirect to dashboard based on the determined role
-            switch ($_SESSION['role']) {
-                case '1':
-                    header("Location: dashboard/dashboard.php");
-                    break;
-                case '2':
-                    header("Location: dashboard/admindashboard.php");
-                    break;
-                case '3':
-                    header("Location: dashboard/member-dashboard.php");
-                    break;
-                case '4':
-                default:
-                    header("Location: client_dashboard.php");
-                    break;
-            }
-            exit();
+            header("Location: dashboard/dashboard.php");
+
         } else {
             echo "Invalid password.";
         }

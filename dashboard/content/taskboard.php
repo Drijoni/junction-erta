@@ -16,8 +16,34 @@ if ($taskboard_id > 0) {
   exit;
 }
 
-?>
 
+
+$query = "SELECT id FROM project_department_relations WHERE project_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $taskboard_id);
+$stmt->execute();
+$departments = $stmt->get_result();
+
+// Check if there are any rows returned
+if ($departments->num_rows > 0) {
+    while ($row = $departments->fetch_assoc()) {
+        $departmentId = $row['id'];
+    }
+} else {
+    echo "No departments found for the given project ID.";
+}
+
+// Close the statement
+$stmt->close();
+
+
+
+?>
+<head>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+</head>
 
 <div class="w-full px-4">
   <div class="flex flex-col">
@@ -34,16 +60,14 @@ if ($taskboard_id > 0) {
     ?>
       <!-- List Section -->
       <div class="flex flex-col w-72 bg-white rounded p-4 mr-4">
-        <!-- List Name -->
         <h2 class="font-bold mb-2"><?= $result['list_name'] ?></h2>
-        <div>
-          <!--Tasks Displayed Here-->
+        <div data-tasklist-id="<?= $result['id'] ?>" class="taskList">
           <?php
           $boardlist_id = $result['id'];
 
           $sql = "SELECT t.* FROM tasks t
-        INNER JOIN board_task_relation btr ON t.id = btr.task_id
-        WHERE btr.project_id = ? AND btr.boardlist_id = ?";
+          INNER JOIN board_task_relation btr ON t.id = btr.task_id
+          WHERE btr.project_id = ? AND btr.boardlist_id = ?";
 
 
           $stmt = $conn->prepare($sql);
@@ -55,15 +79,15 @@ if ($taskboard_id > 0) {
           ?>
 
             <!-- TASK CARD -->
-            <div class="bg-blue-100 rounded p-2 mb-2 cursor-pointer relative h-26 open-task" data-task-id="<?= $task['id'] ?>" data-task-name="<?= $task['name'] ?>" data-task-description="<?= $task['description'] ?>" data-task-priority="<?= $task['priority'] ?>" data-task-img="<?= $task['img'] ?>" onclick="openTask(this)">
+            <div class="bg-blue-100 rounded p-2 mb-2 cursor-pointer relative h-26 open-task" data-department-id="<?=$departmentId?>" data-task-id="<?= $task['id'] ?>" data-task-name="<?= $task['name'] ?>" data-task-description="<?= $task['description'] ?>" data-task-priority="<?= $task['priority'] ?>" data-task-img="<?= $task['img'] ?>" onclick="openTask(this)">
               <h3 class="font-bold"><?= $task['name'] ?></h3>
               <span class="material-symbols-outlined">subject</span>
               <span class="material-symbols-outlined">attachment</span>
               <img class="h-8 w-8 rounded-full absolute bottom-2 right-2" src="https://via.placeholder.com/150" alt="Profile Picture 1">
             </div>
 
-
           <?php } ?>
+          </div>
 
           <form class="flex flex-col" action="./content/create_task.php" method="POST">
             <input type="hidden" name="project_id" value="<?= $taskboard_id ?>">
@@ -73,7 +97,6 @@ if ($taskboard_id > 0) {
             <button type="submit" class="text-blue-500 hover:underline">+ Add another card</button>
           </form>
 
-        </div>
 
       </div>
     <?php } ?>
@@ -101,23 +124,30 @@ if ($taskboard_id > 0) {
               </div>
               <textarea class="w-64 h-32 p-2 border rounded" id="description" placeholder="Describe your issue"></textarea> <!-- Adjusted width -->
             </div>
-            <div class="mr-6"> <!-- Added right margin -->
-              <h2 class="text-xl mb-4 text-gray-600 font-medzium">
-                <div class="flex items-center justify-between mb-2"> <!-- Added justify-between class -->
-                  <div class="flex items-center"> <!-- Added div with flex class -->
-                    <span class="material-symbols-outlined">person</span>
-                    <h2 class="text-xl font-medium text-gray-600 ml-2 mx-6">Members</h2>
+            <form action="./content/user_task_relations.php" method="post">
+              <input type="hidden" id="hiddenTaskID" name="taskID">
+              <input type="hidden" name="hiddenProjectID" id="projectID">
+              <div class="mr-6"> 
+                <h2 class="text-xl mb-4 text-gray-600 font-medzium">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center">
+                      <span class="material-symbols-outlined">person</span>
+                      <h2 class="text-xl font-medium text-gray-600 ml-2 mx-6">Members</h2>
+                    </div>
+                    <button class="bg-blue-300 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">
+                      Assign Members
+                    </button>
                   </div>
-                  <button class="bg-blue-300 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">
-                    Assign Members
-                  </button>
-                </div>
-                <!-- Member cards go here -->
-                <div class="p-2 border rounded mb-2">Member 1</div>
-                <div class="p-2 border rounded mb-2">Member 2</div>
-                <div class="p-2 border rounded mb-2">Member 3</div>
-              </h2>
-            </div>
+                  <select name="userID" class="p-2 border rounded mb-2 w-full">
+                    <option value="0">Select User</option>
+                  </select>
+                  <!-- Member cards go here -->
+                  <div id="taskMembersContainer"></div>
+                  <div class="p-2 border rounded mb-2">Member 1</div>
+
+                </h2>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -139,6 +169,55 @@ if ($taskboard_id > 0) {
 </div>
 
 <script>
+
+$(document).ready(function() {
+    $('.open-task').draggable({
+        revert: "invalid",
+        containment: "document",
+        helper: "clone",
+        cursor: "move"
+    });
+
+    $('.taskList').droppable({
+        accept: ".open-task",
+        hoverClass: "drop-hover",
+        drop: function(event, ui) {
+            var droppedOn = $(this);
+            var dragged = ui.draggable;
+            // Using data-tasklist-id attribute to get the list ID correctly
+            var oldListId = dragged.closest('.taskList').data('tasklist-id');
+            var newListId = droppedOn.data('tasklist-id');
+
+            // Console log the IDs to check if they are correct
+            console.log("Dragging Task ID: " + dragged.data('task-id')); // Log the task ID
+            console.log("Old List ID: " + oldListId); // Log the original list ID
+            console.log("New List ID: " + newListId); // Log the new list ID
+
+            // Move the task card to the new list
+            dragged.detach().css({top: 0, left: 0}).appendTo(droppedOn);
+
+            // Perform the AJAX call to update the backend
+            $.ajax({
+                url: 'content/update_taskList_position.php',
+                method: 'POST',
+                data: {
+                    task_id: dragged.data('task-id'),
+                    new_list_id: newListId
+                },
+                success: function(response) {
+                    console.log('Update successful', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating task position:', error);
+                }
+            });
+        }
+    });
+});
+
+
+
+
   document.getElementById("create-department-button").addEventListener("click", function() {
     var addListCard = document.getElementById("add-list-card");
     if (addListCard.classList.contains("hidden")) {
@@ -161,16 +240,70 @@ if ($taskboard_id > 0) {
   };
 
   //modal
-  function openTask(taskElement) {
+//modal
+function openTask(taskElement) {
+  
+    var id = $(taskElement).data('task-id');
     var taskName = $(taskElement).data('task-name');
     var taskDescription = $(taskElement).data('task-description');
+    var departmentId = $(taskElement).data('department-id'); // Retrieve department_id
+
+    document.getElementById('hiddenTaskID').value = id;
+
+    var urlParams = new URLSearchParams(window.location.search);
+    document.getElementById('projectID').value = urlParams.get('taskboard');
 
     // Set input values with task data
     $('#name').val(taskName);
     $('#description').text(taskDescription);
 
     $('#taskModal').removeClass('hidden');
+
+    $.ajax({
+        url: 'content/fetch_task_members.php',
+        type: 'POST',
+        data: { department_id: departmentId }, // Use departmentId
+        success: function(response) {
+            var departmentMembers = JSON.parse(response);
+            var membersHtml = '<option value="0">Select User</option>';
+
+            $.each(departmentMembers, function(index, member) {
+                membersHtml += '<option value="' + member.id + '">' + member.name + ' ' + member.surname + '</option>';
+            });
+
+            $('select[name="userID"]').html(membersHtml);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching department members:', error);
+        }
+    });
+
+    $.ajax({
+    url: 'content/fetch_user_task_relations.php',
+    type: 'POST',
+    data: { task_id: id },
+    dataType: 'json', // Automatically parse the JSON response
+    success: function(taskMembers) {
+        var membersHtml = '';
+        if (taskMembers.error) {
+            console.error('Server error:', taskMembers.error);
+            $('#taskMembersContainer').html('<div>Error loading task members.</div>');
+        } else {
+            $.each(taskMembers, function(index, member) {
+                membersHtml += '<div class="p-2 border rounded mb-2">' + member.name + ' ' + member.surname + '</div>';
+            });
+            $('#taskMembersContainer').html(membersHtml);
+        }
+    },
+    error: function(xhr, status, error) {
+        console.error('AJAX error:', error, 'Status:', status);
+        console.log('Server response:', xhr.responseText);
+    }
+});
+
   }
+
+
 
   var modal = document.getElementById("taskModal");
 
@@ -179,4 +312,6 @@ if ($taskboard_id > 0) {
     // Hide the modal
     modal.classList.add("hidden");
   });
+
+
 </script>

@@ -1,5 +1,4 @@
 <?php
-include '../config.php';
 
 
 $query = "SELECT * FROM departments";
@@ -224,9 +223,7 @@ $data = [
             </select>
 
             <!-- Member cards -->
-            <div class="p-2 border rounded mb-2">Member 1</div>
-            <div class="p-2 border rounded mb-2">Member 2</div>
-            <div class="p-2 border rounded mb-2">Member 3</div>
+            <div id="departmentMembersContainer"></div>
           </div>
         </form>
       </div>
@@ -258,7 +255,8 @@ $data = [
     const deadline = element.getAttribute('data-deadline');
     const img = element.getAttribute('data-img');
 
-    document.getElementById('modify-id').value = id; // Set the hidden input value
+    document.getElementById('modify-id').value = id;
+    document.getElementById('departmentModal-id').value = id; // Set the hidden input value
     document.getElementById('modify-name').value = name;
     document.getElementById('modify-description').value = description;
     document.getElementById('modify-departmenType').value = priority; // Assuming departmentType represents priority
@@ -266,5 +264,24 @@ $data = [
 
     // Open the modify modal
     document.getElementById('modify-department-modal').classList.remove('hidden');
+
+    $.ajax({
+        url: 'content/fetch_department_members.php',
+        type: 'POST',
+        data: { department_id: id },
+        success: function(response) {
+            var departmentMembers = JSON.parse(response);
+            var membersHtml = '';
+
+            $.each(departmentMembers, function(index, member) {
+                membersHtml += '<div class="p-2 border rounded mb-2">' + member.name + ' ' + member.surname + '</div>';
+            });
+
+            $('#departmentMembersContainer').html(membersHtml);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching department members:', error);
+        }
+    });
   }
 </script>
