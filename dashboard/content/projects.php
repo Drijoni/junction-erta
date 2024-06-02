@@ -108,7 +108,7 @@ $result = $conn->query($query);
 <?php
     }
 } else {
-    echo "No projects found.";
+    echo "No projects found.";  
 }
 $conn->close();
 ?>
@@ -127,7 +127,7 @@ $conn->close();
       <!-- Name -->
       <div class="mb-4">
         <label class="block text-gray-700 font-semibold mb-2" for="name">Name</label>
-        <input   type="text" id="name" name="name" required>
+        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500" type="text" id="create-name" name="name" required>
       </div>
       <!-- Description -->
       <div class="mb-4">
