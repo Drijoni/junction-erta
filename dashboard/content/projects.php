@@ -85,8 +85,10 @@ $result = $conn->query($query);
         </div>
         <hr class="mt-3 mb-6 max-w-md">
         <div class="flex flex-row justify-between items-center">
-          <div class="mt-4 flex space-x-2">
-              <img class="h-8 w-8 rounded-full" src="<?php echo htmlspecialchars($img); ?>" alt="Project Image">
+            <div class=" flex space-x-2">
+              <img class="h-8 w-8 rounded-full" src="./assets/1.png" alt="Project Image">
+              <img class="h-8 w-8 rounded-full" src="./assets/2.png" alt="Project Image">
+              <img class="h-8 w-8 rounded-full" src="./assets/3.png" alt="Project Image">
             </div>
             <div class="text-black px-2 py-1 rounded">
               Priority: 
@@ -108,7 +110,7 @@ $result = $conn->query($query);
 <?php
     }
 } else {
-    echo "No projects found.";
+    echo "No projects found.";  
 }
 $conn->close();
 ?>
@@ -127,7 +129,7 @@ $conn->close();
       <!-- Name -->
       <div class="mb-4">
         <label class="block text-gray-700 font-semibold mb-2" for="name">Name</label>
-        <input   type="text" id="name" name="name" required>
+        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500" type="text" id="create-name" name="name" required>
       </div>
       <!-- Description -->
       <div class="mb-4">
